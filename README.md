@@ -1,5 +1,5 @@
 # fpure
-Pure functional programming library
+Pure functional programming library (Work in progress -- use Ramda or Sanctuary while I build this out)
 
 
 [![Build Status](https://travis-ci.org/SeanCannon/fpure.svg?branch=master)](https://travis-ci.org/SeanCannon/fpure) [![Coverage Status](https://coveralls.io/repos/SeanCannon/fpure/badge.svg?branch=master&service=github)](https://coveralls.io/github/SeanCannon/fpure?branch=master) [![npm version](http://img.shields.io/npm/v/fpure.svg)](https://npmjs.org/package/fpure) [![Dependency Status](https://david-dm.org/SeanCannon/fpure.svg)](https://david-dm.org/SeanCannon/fpure)
