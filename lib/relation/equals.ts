@@ -20,11 +20,11 @@ const _uniqContentEquals = (iterA: Iterator<unknown>, iterB: Iterator<unknown>, 
 };
 
 const __equals = (a: unknown, b: unknown, stackA: unknown[], stackB: unknown[]): boolean => {
+  if (a === null || b === null) return a === b;
   if (identical(a, b)) return true;
   const typeA = Object.prototype.toString.call(a).slice(8, -1);
   const typeB = Object.prototype.toString.call(b).slice(8, -1);
   if (typeA !== typeB) return false;
-  if (a === null || b === null) return false;
 
   switch (typeA) {
     case 'Boolean': case 'Number': case 'String': case 'Date':
