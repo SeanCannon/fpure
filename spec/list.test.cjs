@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { map, filter, reject, reduce, find, findIndex, head, tail, last, init, take, drop, takeWhile, dropWhile, takeLast, dropLast, slice, splitAt, splitEvery, remove, insert, update, adjust, append, prepend, concat, flatten, chain, repeat, times, zip, zipObj, zipWith, groupBy, groupWith, sort, asc, desc, all, any, none, includes, without, difference, intersection, union, uniq, uniqBy, uniqWith, aperture, partition, span, pluck, project, fromPairs, toPairs, reverse, length, countBy, forEach, indexBy, interpose, intercalate, findLast, findLastIndex } = require('../dist/index.js');
+const { map, filter, reject, reduce, reduceRight, find, findIndex, head, tail, last, init, take, drop, takeWhile, dropWhile, takeLast, dropLast, slice, splitAt, splitEvery, remove, insert, insertAll, update, adjust, append, prepend, concat, flatten, chain, repeat, times, zip, zipObj, zipWith, groupBy, groupWith, sort, sortBy, asc, desc, all, any, none, includes, without, difference, intersection, union, uniq, uniqBy, uniqWith, aperture, partition, span, pluck, project, fromPairs, toPairs, reverse, length, countBy, forEach, indexBy, interpose, intercalate, findLast, findLastIndex } = require('../dist/index.js');
 
 describe('list', () => {
   it('map', () => { assert.deepEqual(map(x => x * 2, [1, 2, 3]), [2, 4, 6]); });
@@ -77,5 +77,17 @@ describe('list', () => {
   });
   it('indexBy', () => {
     assert.deepEqual(indexBy(x => x.id, [{ id: 'a', v: 1 }, { id: 'b', v: 2 }]), { a: { id: 'a', v: 1 }, b: { id: 'b', v: 2 } });
+  });
+
+  it('insertAll', () => {
+    assert.deepEqual(insertAll(1, [99, 100], [1, 2, 3]), [1, 99, 100, 2, 3]);
+  });
+
+  it('reduceRight', () => {
+    assert.equal(reduceRight((a, b) => a - b, 0, [1, 2, 3]), -6);
+  });
+
+  it('sortBy', () => {
+    assert.deepEqual(sortBy(x => x.length, ['aaa', 'bb', 'c']), ['c', 'bb', 'aaa']);
   });
 });

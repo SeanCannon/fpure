@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { curry, compose, pipe, identity, always, T, F, flip, apply, tap, juxt, once, memoize } = require('../dist/index.js');
+const { curry, compose, pipe, identity, always, T, F, flip, apply, tap, juxt, once, memoize, converge } = require('../dist/index.js');
 
 describe('function', () => {
   it('curry', () => {
@@ -75,5 +75,10 @@ describe('function', () => {
     assert.equal(fn(5), 10);
     assert.equal(fn(5), 10);
     assert.equal(count, 1);
+  });
+
+  it('converge', () => {
+    const result = converge((a, b) => [a, b], [x => x * 2, x => x + 1])(5);
+    assert.deepEqual(result, [10, 6]);
   });
 });

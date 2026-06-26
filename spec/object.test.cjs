@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { keys, values, entries, has, path, pathOr, prop, propOr, props, assoc, assocPath, dissoc, dissocPath, merge, mergeAll, pick, omit, where, whereEq, evolve, applySpec, lensProp, lensPath, lensIndex, over, set, view } = require('../dist/index.js');
+const { keys, values, entries, has, path, pathOr, prop, propOr, props, assoc, assocPath, dissoc, dissocPath, merge, mergeAll, mergeDeepRight, mergeLeft, mergeRight, pick, pickBy, omit, omitBy, where, whereEq, evolve, applySpec, lens, lensProp, lensPath, lensIndex, over, set, view } = require('../dist/index.js');
 
 describe('object', () => {
   it('keys', () => { assert.deepEqual(keys({ a: 1, b: 2 }), ['a', 'b']); });
@@ -41,7 +41,33 @@ describe('object', () => {
     assert.deepEqual(applySpec({ sum: (...xs) => xs.reduce((a, b) => a + b, 0), max: (...xs) => Math.max(...xs) })(1, 2, 3), { sum: 6, max: 3 });
   });
 
+  it('pickBy', () => {
+    assert.deepEqual(pickBy(v => v > 1, { a: 1, b: 2, c: 3 }), { b: 2, c: 3 });
+  });
+
+  it('omitBy', () => {
+    assert.deepEqual(omitBy(v => v > 1, { a: 1, b: 2, c: 3 }), { a: 1 });
+  });
+
+  describe('merge variants', () => {
+    it('mergeDeepRight', () => {
+      assert.deepEqual(mergeDeepRight({ a: { b: 1 } }, { a: { c: 2 } }), { a: { b: 1, c: 2 } });
+    });
+    it('mergeLeft', () => {
+      assert.deepEqual(mergeLeft({ a: 1 }, { a: 2, b: 3 }), { a: 2, b: 3 });
+    });
+    it('mergeRight', () => {
+      assert.deepEqual(mergeRight({ a: 1 }, { a: 2, b: 3 }), { a: 1, b: 3 });
+    });
+  });
+
   describe('lenses', () => {
+    it('lens', () => {
+      const l = lens(x => x.a, (v, o) => ({ ...o, a: v }));
+      assert.equal(view(l, { a: 1 }), 1);
+      assert.deepEqual(set(l, 42, { a: 1 }), { a: 42 });
+    });
+
     it('lensProp', () => {
       const obj = { a: 1, b: 2 };
       const l = lensProp('a');

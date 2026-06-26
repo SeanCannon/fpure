@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { add, sub, mul, div, mod, mathMod, inc, dec, negate, sum, product, mean, median, min, max, clamp } = require('../dist/index.js');
+const { add, sub, mul, div, mod, mathMod, inc, dec, negate, sum, product, mean, median, min, max, maxBy, minBy, clamp } = require('../dist/index.js');
 
 describe('math', () => {
   it('add', () => { assert.equal(add(4, 5), 9); assert.equal(add(4)(5), 9); });
@@ -26,4 +26,7 @@ describe('math', () => {
   it('min', () => { assert.equal(min(3, 5), 3); });
   it('max', () => { assert.equal(max(3, 5), 5); });
   it('clamp', () => { assert.equal(clamp(1, 10, 5), 5); assert.equal(clamp(1, 10, 0), 1); assert.equal(clamp(1, 10, 15), 10); });
+
+  it('maxBy', () => { assert.equal(maxBy(x => x.length, 'aaa', 'bb'), 'aaa'); });
+  it('minBy', () => { assert.equal(minBy(x => x.length, 'aaa', 'bb'), 'bb'); });
 });
