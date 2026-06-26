@@ -10,8 +10,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "node --test spec/*.test.cjs",
-    "coverage": "c8 --reporter=lcov --reporter=text node --test spec/*.test.cjs",
+    "test": "npm run build && node --test spec/*.test.cjs",
+    "coverage": "npm run build && c8 --reporter=lcov --reporter=text node --test spec/*.test.cjs",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "tsc"
   },

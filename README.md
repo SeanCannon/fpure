@@ -1,4 +1,4 @@
-# fpure
+# `fpure`
 
 [![Coverage Status](https://coveralls.io/repos/github/seancannon/fpure/badge.svg)](https://coveralls.io/github/seancannon/fpure)
 
@@ -6,11 +6,13 @@ Pure, curried, functional programming utilities for TypeScript.
 
 Inspired by Ramda and Sanctuary
 
-```
+## Install
+
+```sh
 npm install fpure
-npm run build
-npm test
 ```
+
+## Usage Example
 
 ```ts
 import { compose, add, map, filter, gt } from 'fpure';
@@ -24,32 +26,32 @@ compose(
 
 ---
 
-## Why fpure?
+## Why `fpure`?
 
 ### Comparison
 
-| Metric | fpure | Ramda | Sanctuary |
-|--------|-------|-------|-----------|
-| Bundle size (gzip) | **7 KB** (full lib) | ~40 KB | ~15 KB |
-| Zero runtime dependencies | **Yes** | Yes | No (type system deps) |
-| Runtime type checks | **No** (types at compile time only) | No | Yes (runtime validation) |
-| TypeScript declarations | **Built-in, ships with package** | Requires `@types/ramda` | Ships with package |
+| Metric | `fpure`                                            | Ramda | Sanctuary |
+|--------|--------------------------------------------------|-------|-----------|
+| Bundle size (gzip) | **7 KB** (full lib)                              | ~40 KB | ~15 KB |
+| Zero runtime dependencies | **Yes**                                          | Yes | No (type system deps) |
+| Runtime type checks | **No** (types at compile time only)              | No | Yes (runtime validation) |
+| TypeScript declarations | **Built-in, ships with package**                 | Requires `@types/ramda` | Ships with package |
 | Deep import for tree-shaking (CJS) | **Supported** (`require('fpure/dist/list/map')`) | Not supported (single 351 KB `dist/ramda.js`) | N/A |
-| Deep import for tree-shaking (ESM) | Not yet (CJS-only — works via bundler interop) | Supported (`import map from 'ramda/es/map'`) | Supported |
-| Per-function internal dependencies | **1** (`curry`) | 2–8 (`_curry2`, `_dispatchable`, `_xmap`, etc.) | Varies |
-| Data-last `sub(3)(10)` | **`7`** (10 − 3) | `−7` (3 − 10) | `7` |
-| Data-last `gt(3)(5)` | **`true`** (5 > 3) | `false` (3 > 5) | `true` |
-| Function count | 147 | ~300 | ~100 |
+| Deep import for tree-shaking (ESM) | Not yet (CJS-only... works via bundler interop)  | Supported (`import map from 'ramda/es/map'`) | Supported |
+| Per-function internal dependencies | **1** (`curry`)                                  | 2–8 (`_curry2`, `_dispatchable`, `_xmap`, etc.) | Varies |
+| Data-last `sub(3)(10)` | **`7`** (10 − 3)                                 | `−7` (3 − 10) | `7` |
+| Data-last `gt(3)(5)` | **`true`** (5 > 3)                               | `false` (3 > 5) | `true` |
+| Function count | 147                                              | ~300 | ~100 |
 
 ### Key differentiators
 
-**Data-last for ALL binary ops.** Ramda's `sub`, `div`, `mod`, and `gt`/`lt`/`gte`/`lte` use config-first ordering that produces surprising results (`sub(3)(10)` = `-7`, `gt(3)(5)` = `false`). fpure is consistently data-last: `sub(3)(10)` = `7`, `gt(3)(5)` = `true`.
+**Data-last for ALL binary ops.** Ramda's `sub`, `div`, `mod`, and `gt`/`lt`/`gte`/`lte` use config-first ordering that produces surprising results (`sub(3)(10)` = `-7`, `gt(3)(5)` = `false`). `fpure` is consistently data-last: `sub(3)(10)` = `7`, `gt(3)(5)` = `true`.
 
-**Minimal per-function overhead.** Each Ramda function imports 2–8 internal helpers (`_curry2`, `_dispatchable`, `_xfilter`, etc.). Every fpure function imports only `curry` — one dependency, zero shared machinery beyond that. This keeps bundles lean even without advanced tree-shaking.
+**Minimal per-function overhead.** Each Ramda function imports 2–8 internal helpers (`_curry2`, `_dispatchable`, `_xfilter`, etc.). Every `fpure` function imports only `curry`.
 
-**CJS tree-shakeable.** fpure ships every function as a standalone CommonJS file. You can deep-import `require('fpure/dist/list/map')` and get exactly that function + `curry` — no barrel overhead, no bundled internals. Ramda's CJS entry is a single 351 KB `dist/ramda.js` bundle with no CJS per-function alternative.
+**CJS tree-shakeable.** `fpure` ships every function as a standalone CommonJS file. You can deep-import `require('fpure/dist/list/map')` and get exactly that function + `curry` (no barrel overhead, no bundled internals). Ramda's CJS entry is a single 351 KB `dist/ramda.js` bundle with no CJS per-function alternative.
 
-**Zero runtime type overhead.** Sanctuary validates types at runtime. fpure uses TypeScript types only — zero runtime cost, faster execution, smaller bundles.
+**Zero runtime type overhead.** Sanctuary validates types at runtime. `fpure` uses TypeScript types only, meaning zero runtime cost, faster execution, smaller bundles.
 
 ---
 
@@ -315,7 +317,7 @@ Greater than.
 ```ts
 gt(3, 5)   // => true  (5 > 3)
 gt(5, 3)   // => false
-gt(3)(5)   // => true  — "is arg > 3?"
+gt(3)(5)   // => true  "is arg > 3?"
 
 const gt5 = gt(5)
 gt5(10)    // => true
@@ -1317,8 +1319,19 @@ Every function returns a new value. Inputs are never mutated.
 
 ### Purity
 
-No side effects in logic functions. `tap` and `forEach` are the only exceptions — they're explicitly for side effects.
+No side effects in logic functions. `tap` and `forEach` are the only exceptions since they're explicitly for side effects.
 
 ### No Inference
 
-Unlike Ramda, fpure never inspects argument types to guess your intent. TypeScript handles type safety at compile time. Runtime is strict.
+Unlike Ramda, `fpure` never inspects argument types to guess your intent. TypeScript handles type safety at compile time. Runtime is strict.
+
+---
+
+## Development
+
+Clone the repo and make changes to `lib/`. TypeScript is compiled to `dist/` before running tests.
+
+```sh
+npm install        # install dev dependencies (TypeScript, c8)
+npm test           # compiles lib/ → dist/, then runs tests
+```
