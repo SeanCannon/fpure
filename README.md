@@ -32,7 +32,7 @@ compose(
 
 | Metric | `fpure`                                            | Ramda | Sanctuary |
 |--------|--------------------------------------------------|-------|-----------|
-| Bundle size (gzip) | **7 KB** (full lib)                              | ~40 KB | ~15 KB |
+| Bundle size (gzip) | **7 KB** (full lib)                              | ~14 KB (minified) | ~30 KB |
 | Zero runtime dependencies | **Yes**                                          | Yes | No (type system deps) |
 | Runtime type checks | **No** (types at compile time only)              | No | Yes (runtime validation) |
 | TypeScript declarations | **Built-in, ships with package**                 | Requires `@types/ramda` | Ships with package |
