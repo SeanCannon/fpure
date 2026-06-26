@@ -57,6 +57,10 @@ describe('equals', () => {
     assert.equal(equals(1, 1), true);
     assert.equal(equals(1, '1'), false);
     assert.equal(equals(NaN, NaN), true);
+    assert.equal(equals(true, false), false);
+    assert.equal(equals(false, true), false);
+    assert.equal(equals(null, null), true);
+    assert.equal(equals(null, undefined), false);
   });
 
   it('compares arrays deeply', () => {
