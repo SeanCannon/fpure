@@ -1,5 +1,7 @@
 # fpure
 
+[![Coverage Status](https://coveralls.io/repos/github/seancannon/fpure/badge.svg)](https://coveralls.io/github/seancannon/fpure)
+
 Pure, curried, functional programming utilities for TypeScript.
 
 Inspired by Ramda and Sanctuary
