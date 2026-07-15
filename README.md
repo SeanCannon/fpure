@@ -36,7 +36,7 @@ compose(
 | Zero runtime dependencies | **Yes**                                          | Yes | No (type system deps) |
 | Runtime type checks | **No** (types at compile time only)              | No | Yes (runtime validation) |
 | TypeScript declarations | **Built-in, ships with package**                 | Requires `@types/ramda` | Ships with package |
-| Deep import for tree-shaking (CJS) | **Supported** (`require('fpure/dist/list/map')`) | Not supported (single 351 KB `dist/ramda.js`) | N/A |
+| Deep import for tree-shaking (CJS) | **Supported** (`require('fpure/list/map')`) | Not supported (single 351 KB `dist/ramda.js`) | N/A |
 | Deep import for tree-shaking (ESM) | Not yet (CJS-only... works via bundler interop)  | Supported (`import map from 'ramda/es/map'`) | Supported |
 | Per-function internal dependencies | **1** (`curry`)                                  | 2–8 (`_curry2`, `_dispatchable`, `_xmap`, etc.) | Varies |
 | Data-last `sub(3)(10)` | **`7`** (10 − 3)                                 | `−7` (3 − 10) | `7` |
@@ -49,7 +49,7 @@ compose(
 
 **Minimal per-function overhead.** Each Ramda function imports 2–8 internal helpers (`_curry2`, `_dispatchable`, `_xfilter`, etc.). Every `fpure` function imports only `curry`.
 
-**CJS tree-shakeable.** `fpure` ships every function as a standalone CommonJS file. You can deep-import `require('fpure/dist/list/map')` and get exactly that function + `curry` (no barrel overhead, no bundled internals). Ramda's CJS entry is a single 351 KB `dist/ramda.js` bundle with no CJS per-function alternative.
+**CJS tree-shakeable.** `fpure` ships every function as a standalone CommonJS file. You can deep-import `require('fpure/list/map')` and get exactly that function + `curry` (no barrel overhead, no bundled internals). Ramda's CJS entry is a single 351 KB `dist/ramda.js` bundle with no CJS per-function alternative.
 
 **Zero runtime type overhead.** Sanctuary validates types at runtime. `fpure` uses TypeScript types only, meaning zero runtime cost, faster execution, smaller bundles.
 

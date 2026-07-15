@@ -1,9 +1,43 @@
 {
   "name": "fpure",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Pure, curried, functional programming utilities for TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
+    },
+    "./function": {
+      "types": "./dist/function/index.d.ts",
+      "require": "./dist/function/index.js"
+    },
+    "./list": {
+      "types": "./dist/list/index.d.ts",
+      "require": "./dist/list/index.js"
+    },
+    "./math": {
+      "types": "./dist/math/index.d.ts",
+      "require": "./dist/math/index.js"
+    },
+    "./object": {
+      "types": "./dist/object/index.d.ts",
+      "require": "./dist/object/index.js"
+    },
+    "./relation": {
+      "types": "./dist/relation/index.d.ts",
+      "require": "./dist/relation/index.js"
+    },
+    "./string": {
+      "types": "./dist/string/index.d.ts",
+      "require": "./dist/string/index.js"
+    },
+    "./type": {
+      "types": "./dist/type/index.d.ts",
+      "require": "./dist/type/index.js"
+    }
+  },
   "sideEffects": false,
   "files": [
     "dist/"
