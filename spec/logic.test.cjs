@@ -275,7 +275,11 @@ describe('defaultTo', () => {
     assert.equal(defaultTo(42, undefined), 42);
   });
 
-  it('returns the value when it is not null or undefined', () => {
+  it('returns the default value when the value is NaN', () => {
+    assert.equal(defaultTo(42, NaN), 42);
+  });
+
+  it('returns the value when it is not null, undefined, or NaN', () => {
     assert.equal(defaultTo(42, 0), 0);
     assert.equal(defaultTo(42, ''), '');
     assert.equal(defaultTo(42, false), false);

@@ -529,6 +529,11 @@ describe('range', () => {
   it('generates a range from from to to', () => {
     assert.deepEqual(range(1, 5), [1, 2, 3, 4]);
   });
+
+  it('supports partial application', () => {
+    const from1 = range(1);
+    assert.deepEqual(from1(4), [1, 2, 3]);
+  });
 });
 
 describe('reduceBy', () => {
