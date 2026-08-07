@@ -1,0 +1,1 @@
+export const dropRepeats = <A>(arr: A[]): A[] => arr.filter((x, i) => i === 0 || x !== arr[i - 1]);

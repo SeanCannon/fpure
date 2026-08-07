@@ -1,0 +1,1 @@
+export const unnest = <A>(arr: A[][]): A[] => ([] as A[]).concat(...arr);

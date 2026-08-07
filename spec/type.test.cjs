@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { type, isNil, isArray, isObject, isString, isNumber, isBoolean, isFunction, isDate, isRegExp, isError, isPromise, isInteger, isFiniteNum, isNaNVal } = require('../dist/index.js');
+const { type, is, isNil, isNotNil, isArray, isObject, isString, isNumber, isBoolean, isFunction, isDate, isRegExp, isError, isPromise, isInteger, isFiniteNum, isNaNVal } = require('../dist/index.js');
 
 describe('type', () => {
   it('returns the internal [[Class]] name for each value type', () => {
@@ -163,5 +163,25 @@ describe('isNaNVal', () => {
 
   it('returns false for non-NaN values', () => {
     assert.equal(isNaNVal(42), false);
+  });
+});
+
+describe('is', () => {
+  it('checks if value is instance of constructor', () => {
+    assert.equal(is(Array, []), true);
+    assert.equal(is(RegExp, /x/), true);
+    assert.equal(is(Array, {}), false);
+  });
+});
+
+describe('isNotNil', () => {
+  it('returns true for non-null/non-undefined values', () => {
+    assert.equal(isNotNil(0), true);
+    assert.equal(isNotNil(''), true);
+    assert.equal(isNotNil(false), true);
+  });
+  it('returns false for null and undefined', () => {
+    assert.equal(isNotNil(null), false);
+    assert.equal(isNotNil(undefined), false);
   });
 });

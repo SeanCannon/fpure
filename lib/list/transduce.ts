@@ -1,0 +1,2 @@
+import { curry } from '../function/curry';
+export const transduce = curry(<A, B, C>(xf: (step: (acc: B, x: A) => B) => (acc: B, x: A) => B, fn: (acc: B, x: A) => B, init: B, arr: A[]): B => arr.reduce(xf(fn), init));

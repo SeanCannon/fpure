@@ -8,6 +8,7 @@ export * from './replace';
 export * from './split';
 export * from './startsWith';
 export * from './test';
+export * from './toString';
 export * from './toLower';
 export * from './toUpper';
 export * from './trim';

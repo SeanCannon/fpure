@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { keys, values, entries, has, path, pathOr, prop, propOr, props, assoc, assocPath, dissoc, dissocPath, merge, mergeAll, mergeDeepRight, mergeLeft, mergeRight, pick, pickBy, omit, omitBy, where, whereEq, evolve, applySpec, lens, lensProp, lensPath, lensIndex, over, set, view } = require('../dist/index.js');
+const { keys, values, entries, has, path, pathOr, prop, propOr, props, assoc, assocPath, dissoc, dissocPath, merge, mergeAll, mergeDeepRight, mergeLeft, mergeRight, pick, pickBy, omit, omitBy, where, whereEq, evolve, applySpec, lens, lensProp, lensPath, lensIndex, over, set, view, clone, eqProps, forEachObjIndexed, hasIn, hasPath, invert, invertObj, keysIn, mapKeys, mapObjIndexed, mergeDeepLeft, mergeDeepWith, mergeDeepWithKey, mergeWith, mergeWithKey, modify, modifyPath, objOf, paths, pickAll, renameKeys, toPairsIn, unwind, valuesIn, whereAny } = require('../dist/index.js');
 
 describe('keys', () => {
   it('returns the keys of an object', () => {
@@ -198,14 +198,14 @@ describe('merge variants', () => {
   });
 
   describe('mergeLeft', () => {
-    it('merges the right object into the left, right values override', () => {
-      assert.deepEqual(mergeLeft({ a: 1 }, { a: 2, b: 3 }), { a: 2, b: 3 });
+    it('merges with left values taking precedence', () => {
+      assert.deepEqual(mergeLeft({ a: 1 }, { a: 2, b: 3 }), { a: 1, b: 3 });
     });
   });
 
   describe('mergeRight', () => {
-    it('merges the left object into the right, left values override', () => {
-      assert.deepEqual(mergeRight({ a: 1 }, { a: 2, b: 3 }), { a: 1, b: 3 });
+    it('merges with right values taking precedence', () => {
+      assert.deepEqual(mergeRight({ a: 1 }, { a: 2, b: 3 }), { a: 2, b: 3 });
     });
   });
 });
@@ -244,5 +244,234 @@ describe('lensIndex', () => {
     const l = lensIndex(1);
     assert.equal(view(l, arr), 20);
     assert.deepEqual(set(l, 99, arr), [10, 99, 30]);
+  });
+});
+
+describe('clone', () => {
+  it('deep clones a value', () => {
+    const obj = { a: 1, b: { c: 2 } };
+    const cloned = clone(obj);
+    assert.deepEqual(cloned, obj);
+    assert.notEqual(cloned, obj);
+    assert.notEqual(cloned.b, obj.b);
+  });
+});
+
+describe('eqProps', () => {
+  it('checks if two objects have equal property values', () => {
+    assert.equal(eqProps('a', { a: 1 }, { a: 1 }), true);
+    assert.equal(eqProps('a', { a: 1 }, { a: 2 }), false);
+  });
+});
+
+describe('forEachObjIndexed', () => {
+  it('iterates over object entries', () => {
+    const result = [];
+    forEachObjIndexed((v, k) => result.push(`${k}:${v}`), { a: 1, b: 2 });
+    assert.deepEqual(result, ['a:1', 'b:2']);
+  });
+});
+
+describe('hasIn', () => {
+  it('checks prototype chain', () => {
+    assert.equal(hasIn('toString', {}), true);
+    assert.equal(hasIn('x', {}), false);
+  });
+});
+
+describe('hasPath', () => {
+  it('checks nested path existence', () => {
+    assert.equal(hasPath(['a', 'b'], { a: { b: 1 } }), true);
+    assert.equal(hasPath(['a', 'c'], { a: { b: 1 } }), false);
+  });
+});
+
+describe('invert', () => {
+  it('inverts keys and values', () => {
+    assert.deepEqual(invert({ a: 'x', b: 'y', c: 'x' }), { x: ['a', 'c'], y: ['b'] });
+  });
+});
+
+describe('invertObj', () => {
+  it('inverts keys and values (last wins)', () => {
+    assert.deepEqual(invertObj({ a: 'x', b: 'x' }), { x: 'b' });
+  });
+});
+
+describe('keysIn', () => {
+  it('returns keys including prototype', () => {
+    const proto = { a: 1 };
+    const obj = Object.create(proto);
+    obj.b = 2;
+    const result = keysIn(obj);
+    assert.equal(result.includes('a'), true);
+    assert.equal(result.includes('b'), true);
+  });
+});
+
+describe('mapKeys', () => {
+  it('transforms keys', () => {
+    assert.deepEqual(mapKeys(k => k.toUpperCase(), { a: 1, b: 2 }), { A: 1, B: 2 });
+  });
+});
+
+describe('mapObjIndexed', () => {
+  it('maps over object values', () => {
+    assert.deepEqual(mapObjIndexed(v => v * 2, { a: 1, b: 2 }), { a: 2, b: 4 });
+  });
+});
+
+describe('mergeDeepLeft', () => {
+  it('deep merges with left precedence', () => {
+    assert.deepEqual(mergeDeepLeft({ a: { b: 1, c: 2 } }, { a: { c: 3, d: 4 } }), { a: { b: 1, c: 2, d: 4 } });
+  });
+});
+
+describe('mergeDeepWith', () => {
+  it('deep merges with resolver', () => {
+    assert.deepEqual(mergeDeepWith((a, b) => a + b, { a: 1, b: { c: 1 } }, { a: 2, b: { c: 2 } }), { a: 3, b: { c: 3 } });
+  });
+});
+
+describe('mergeDeepWithKey', () => {
+  it('deep merges with key-aware resolver', () => {
+    const result = mergeDeepWithKey((k, a, b) => k === 'a' ? a : b, { a: 1, b: 2 }, { a: 10, b: 20 });
+    assert.equal(result.a, 1);
+    assert.equal(result.b, 20);
+  });
+});
+
+describe('mergeWith', () => {
+  it('merges with resolver', () => {
+    assert.deepEqual(mergeWith((a, b) => a + b, { a: 1, b: 2 }, { a: 10, c: 3 }), { a: 11, b: 2, c: 3 });
+  });
+});
+
+describe('mergeWithKey', () => {
+  it('merges with key-aware resolver', () => {
+    const result = mergeWithKey((k, a, b) => k === 'a' ? a : b, { a: 1, b: 2 }, { a: 10, b: 20 });
+    assert.equal(result.a, 1);
+    assert.equal(result.b, 20);
+  });
+});
+
+describe('modify', () => {
+  it('applies function to a property', () => {
+    assert.deepEqual(modify('a', x => x * 2, { a: 5, b: 10 }), { a: 10, b: 10 });
+  });
+});
+
+describe('modifyPath', () => {
+  it('applies function at a nested path', () => {
+    assert.deepEqual(modifyPath(['a', 'b'], x => x * 2, { a: { b: 5 }, c: 1 }), { a: { b: 10 }, c: 1 });
+  });
+});
+
+describe('objOf', () => {
+  it('creates single-key object', () => {
+    assert.deepEqual(objOf('a', 1), { a: 1 });
+  });
+});
+
+describe('paths', () => {
+  it('extracts values at multiple paths', () => {
+    assert.deepEqual(paths([['a', 'b'], ['c']], { a: { b: 1 }, c: 2 }), [1, 2]);
+  });
+});
+
+describe('pickAll', () => {
+  it('picks including undefined', () => {
+    assert.deepEqual(pickAll(['a', 'x'], { a: 1 }), { a: 1, x: undefined });
+  });
+});
+
+describe('renameKeys', () => {
+  it('renames keys', () => {
+    assert.deepEqual(renameKeys({ a: 'x', b: 'y' }, { a: 1, b: 2 }), { x: 1, y: 2 });
+  });
+});
+
+describe('toPairsIn', () => {
+  it('converts to pairs including prototype', () => {
+    const proto = { a: 1 };
+    const obj = Object.create(proto);
+    obj.b = 2;
+    const pairs = toPairsIn(obj);
+    assert.deepEqual(pairs, [['b', 2], ['a', 1]]);
+  });
+});
+
+describe('unwind', () => {
+  it('unwinds array property', () => {
+    assert.deepEqual(unwind('items', { items: [1, 2], x: 1 }), [{ items: 1, x: 1 }, { items: 2, x: 1 }]);
+  });
+});
+
+describe('valuesIn', () => {
+  it('returns values including prototype', () => {
+    const proto = { a: 1 };
+    const obj = Object.create(proto);
+    obj.b = 2;
+    const vals = valuesIn(obj);
+    assert.equal(vals.includes(2), true);
+    assert.equal(vals.includes(1), true);
+  });
+});
+
+describe('whereAny', () => {
+  it('returns true if any predicate matches', () => {
+    const pred = whereAny({ a: x => x > 0, b: x => x.length > 1 });
+    assert.equal(pred({ a: 0, b: 'hi' }), true);
+    assert.equal(pred({ a: 0, b: 'x' }), false);
+  });
+});
+
+describe('mergeDeepWith extra branches', () => {
+  it('handles non-overlapping keys and non-object values', () => {
+    const fn = (a, b) => a + b;
+    assert.deepEqual(mergeDeepWith(fn, { a: 1, b: { c: 1 } }, { a: 2, b: { c: 2 } }), { a: 3, b: { c: 3 } });
+    assert.deepEqual(mergeDeepWith(fn, { a: 1 }, { b: 2 }), { a: 1, b: 2 });
+    assert.deepEqual(mergeDeepWith(fn, { a: 1 }, { a: 2 }), { a: 3 });
+    assert.deepEqual(mergeDeepWith(fn, {}, { a: 2 }), { a: 2 });
+    assert.deepEqual(mergeDeepWith(fn, { a: 1 }, {}), { a: 1 });
+    assert.deepEqual(mergeDeepWith(fn, null, { a: 1 }), { a: 1 });
+    assert.deepEqual(mergeDeepWith(fn, { a: 1 }, null), { a: 1 });
+  });
+});
+
+describe('mergeDeepWithKey extra branches', () => {
+  it('handles non-overlapping keys and non-object values', () => {
+    const fn = (k, a, b) => k === 'a' ? a : b;
+    assert.deepEqual(mergeDeepWithKey(fn, { a: { b: 1 }, c: { d: 1 } }, { a: { b: 2 }, c: { d: 2 } }), { a: { b: 2 }, c: { d: 2 } });
+    assert.deepEqual(mergeDeepWithKey(fn, { a: 1 }, { b: 2 }), { a: 1, b: 2 });
+    assert.deepEqual(mergeDeepWithKey(fn, { a: 1 }, { a: 2 }), { a: 1 });
+    assert.deepEqual(mergeDeepWithKey(fn, {}, { a: 2 }), { a: 2 });
+    assert.deepEqual(mergeDeepWithKey(fn, { a: 1 }, {}), { a: 1 });
+    assert.deepEqual(mergeDeepWithKey(fn, null, { a: 1 }), { a: 1 });
+    assert.deepEqual(mergeDeepWithKey(fn, { a: 1 }, null), { a: 1 });
+  });
+});
+
+describe('modifyPath empty path', () => {
+  it('applies fn to root when path is empty', () => {
+    assert.equal(modifyPath([], x => x + 1, 41), 42);
+  });
+});
+
+describe('paths with null in path', () => {
+  it('returns undefined for null intermediate', () => {
+    assert.deepEqual(paths([['a', 'b']], { a: null }), [undefined]);
+  });
+});
+
+describe('renameKeys with missing key mapping', () => {
+  it('keeps original key when not in map', () => {
+    assert.deepEqual(renameKeys({ a: 'x' }, { a: 1, b: 2 }), { x: 1, b: 2 });
+  });
+});
+
+describe('unwind with non-array value', () => {
+  it('returns singleton array for non-array property', () => {
+    assert.deepEqual(unwind('items', { items: 42, x: 1 }), [{ items: 42, x: 1 }]);
   });
 });

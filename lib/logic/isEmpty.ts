@@ -1,0 +1,1 @@
+export const isEmpty = (x: unknown): boolean => x == null || (typeof x === 'string' && x === '') || (Array.isArray(x) && x.length === 0) || (typeof x === 'object' && x !== null && !Array.isArray(x) && Object.keys(x).length === 0);

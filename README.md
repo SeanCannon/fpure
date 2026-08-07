@@ -41,7 +41,7 @@ compose(
 | Per-function internal dependencies | **1** (`curry`)                                  | 2–8 (`_curry2`, `_dispatchable`, `_xmap`, etc.) | Varies |
 | Data-last `sub(3)(10)` | **`7`** (10 − 3)                                 | `−7` (3 − 10) | `7` |
 | Data-last `gt(3)(5)` | **`true`** (5 > 3)                               | `false` (3 > 5) | `true` |
-| Function count | 147                                              | ~300 | ~100 |
+| Function count | 247                                              | ~300 | ~100 |
 
 ### Key differentiators
 
@@ -59,6 +59,7 @@ compose(
 
 - [Curry](#curry)
 - [Function Combinators](#function-combinators)
+- [Logic](#logic)
 - [Math](#math)
 - [Relation](#relation)
 - [List](#list)
@@ -174,6 +175,296 @@ Accepts a converging function and a list of branches. Returns a function that ap
 
 ```ts
 converge((a, b) => a + b, [x => x * 2, x => x * 3])(5)  // => 25  (10 + 15)
+```
+
+### `applyTo`
+
+Data-first apply: applies a value to a function.
+
+```ts
+applyTo(5, x => x + 1)  // => 6
+```
+
+### `tryCatch`
+
+Wraps a try/catch as a function.
+
+```ts
+tryCatch(x => { if (x < 0) throw Error(); return x; }, () => 0, -1)  // => 0
+```
+
+### `partial`
+
+Partially applies arguments from the left.
+
+```ts
+const add3 = (a, b, c) => a + b + c
+partial(add3, 1)(2, 3)  // => 6
+```
+
+### `partialRight`
+
+Partially applies arguments from the right.
+
+```ts
+const greet = (s, t, n) => `${s}, ${t} ${n}`
+partialRight(greet, 'Ms.', 'Smith')('Hello')  // => 'Hello, Ms. Smith'
+```
+
+### `curryN`
+
+Curries a function to a specific arity.
+
+```ts
+curryN(3, (a, b, c) => a + b + c)(1)(2)(3)  // => 6
+```
+
+### `ascend` / `descend`
+
+Creates comparator functions from a transform for sorting.
+
+```ts
+const byLength = ascend(x => x.length)
+['aaa', 'b', 'cc'].sort(byLength)  // => ['b', 'cc', 'aaa']
+```
+
+### `comparator`
+
+Creates a comparator from a simple predicate.
+
+```ts
+const byFirst = comparator((a, b) => a < b)
+[3, 1, 2].sort(byFirst)  // => [1, 2, 3]
+```
+
+### `composeWith` / `pipeWith`
+
+Compose/pipe with a custom sequencing function.
+
+### `flow`
+
+Left-to-right async composition (pipe for promises).
+
+### `lift`
+
+Lifts a binary function over arrays (cartesian product).
+
+```ts
+lift((a, b) => a + b, [1, 2], [3, 4])  // => [4, 5, 5, 6]
+```
+
+### `memoizeWith`
+
+Memoize with a custom key function.
+
+### `otherwise`
+
+Promise error handler (`.catch` as a function).
+
+### `o`
+
+Right-to-left composition of two unary functions.
+
+```ts
+o(x => x * 2, x => x + 1)(5)  // => 12
+```
+
+### `on`
+
+Applies a binary function to two transformed values.
+
+```ts
+on((a, b) => a + b, x => x * 2, 5, 3)  // => 16
+```
+
+### Additional function combinators
+
+`bind`, `call`, `invoker`, `nAry`, `nthArg`, `of`, `unapply`, `unary`, `uncurryN`, `useWith`, `ascendNatural`, `descendNatural`, `promap`, `thunkify`, `liftN`
+
+---
+
+## Logic
+
+### `both`
+
+Returns true when both predicates pass for a value.
+
+```ts
+const isPositive = x => x > 0
+const isEven = x => x % 2 === 0
+both(isPositive, isEven, 4)   // => true
+both(isPositive, isEven, 3)   // => false
+```
+
+### `either`
+
+Returns true when either predicate passes.
+
+```ts
+either(isPositive, isEven, 4)   // => true
+either(isPositive, isEven, -3)  // => false
+```
+
+### `and`
+
+Returns the first falsy argument, otherwise the last argument.
+
+```ts
+and(null, 42)  // => null
+and(true, 42)  // => 42
+```
+
+### `or`
+
+Returns the first truthy argument, otherwise the last argument.
+
+```ts
+or(42, 100)   // => 42
+or(null, 42)  // => 42
+```
+
+### `not`
+
+Logical negation.
+
+```ts
+not(true)   // => false
+not(false)  // => true
+```
+
+### `complement`
+
+Negates a predicate function.
+
+```ts
+const isOdd = complement(x => x % 2 === 0)
+isOdd(1)  // => true
+```
+
+### `ifElse`
+
+Conditional branching as a function.
+
+```ts
+ifElse(x => x > 0, x => x + 1, x => x - 1, 5)   // => 6
+ifElse(x => x > 0, x => x + 1, x => x - 1, -5)  // => -6
+```
+
+### `when`
+
+Applies a function when the predicate is true, otherwise returns the value unchanged.
+
+```ts
+when(x => x > 0, x => x * 2, 5)   // => 10
+when(x => x > 0, x => x * 2, -5)  // => -5
+```
+
+### `unless`
+
+Applies a function when the predicate is false, otherwise returns the value unchanged.
+
+```ts
+unless(x => x > 0, x => x * 2, -5)  // => -10
+unless(x => x > 0, x => x * 2, 5)   // => 5
+```
+
+### `cond`
+
+Pattern matching via predicate/transformer pairs.
+
+```ts
+const classify = cond([
+  [x => x < 0, () => 'negative'],
+  [x => x === 0, () => 'zero'],
+  [x => x > 0, () => 'positive'],
+])
+classify(-1)  // => 'negative'
+classify(0)   // => 'zero'
+classify(1)   // => 'positive'
+```
+
+### `allPass`
+
+Returns true when all predicates in a list pass.
+
+```ts
+allPass([x => x > 0, x => x % 2 === 0], 4)  // => true
+allPass([x => x > 0, x => x % 2 === 0], 3)  // => false
+```
+
+### `anyPass`
+
+Returns true when any predicate in a list passes.
+
+```ts
+anyPass([x => x > 0, x => x % 2 === 0], 4)  // => true
+anyPass([x => x > 0, x => x % 2 === 0], -3) // => false
+```
+
+### `defaultTo`
+
+Returns the default value when the input is null or undefined.
+
+```ts
+defaultTo(42, null)       // => 42
+defaultTo(42, undefined)  // => 42
+defaultTo(42, 0)          // => 0
+```
+
+### `isEmpty`
+
+Returns true for null, undefined, empty string, empty array, or empty object.
+
+```ts
+isEmpty(null)   // => true
+isEmpty([])     // => true
+isEmpty({})     // => true
+isEmpty('')     // => true
+isEmpty('a')    // => false
+```
+
+### `isNotEmpty`
+
+Negation of `isEmpty`.
+
+```ts
+isNotEmpty('a')  // => true
+isNotEmpty(null) // => false
+```
+
+### `pathSatisfies`
+
+Checks if a value at a path satisfies a predicate.
+
+```ts
+pathSatisfies(x => x > 0, ['a', 'b'], {a: {b: 5}})  // => true
+```
+
+### `propSatisfies`
+
+Checks if a property satisfies a predicate.
+
+```ts
+propSatisfies(x => x > 0, 'a', {a: 5})  // => true
+```
+
+### `until`
+
+Applies a function to a value until the predicate is satisfied.
+
+```ts
+until(x => x >= 100, x => x * 2, 1)  // => 128
+```
+
+### `xor`
+
+Exclusive OR. True when exactly one argument is truthy.
+
+```ts
+xor(true, false)  // => true
+xor(false, true)  // => true
+xor(true, true)   // => false
+xor(false, false) // => false
 ```
 
 ---
@@ -374,6 +665,44 @@ equals([1, [2, 3]], [1, [2, 3]])  // => true
 equals({a: 1, b: {c: 3}}, {a: 1, b: {c: 3}})  // => true
 equals(new Date(0), new Date(0))  // => true
 ```
+
+### `propEq`
+
+Checks if a property equals a value.
+
+```ts
+propEq(42, 'a', {a: 42})   // => true
+propEq(99, 'a', {a: 42})   // => false
+```
+
+### `pathEq`
+
+Checks if a value at a path equals a target.
+
+```ts
+pathEq(42, ['a', 'b'], {a: {b: 42}})  // => true
+```
+
+### `eqBy`
+
+Compares two values after applying a transform.
+
+```ts
+eqBy(x => x.length, 'hello', 'world')  // => true
+```
+
+### `sortWith`
+
+Sorts with multiple comparators (priority order).
+
+```ts
+const data = [{name: 'a', age: 30}, {name: 'b', age: 20}]
+sortWith([(a, b) => a.name.localeCompare(b.name), (a, b) => a.age - b.age], data)
+```
+
+### `differenceWith` / `innerJoin` / `symmetricDifference` / `symmetricDifferenceWith` / `unionWith`
+
+Relationship operations with custom comparators.
 
 ---
 
@@ -864,6 +1193,123 @@ indexBy(x => x.id, [{id: 'a', v: 1}, {id: 'b', v: 2}])
 // => { a: {id: 'a', v: 1}, b: {id: 'b', v: 2} }
 ```
 
+### `range`
+
+Generates a range of numbers.
+
+```ts
+range(1, 5)  // => [1, 2, 3, 4]
+```
+
+### `nth`
+
+Returns the nth element (supports negative indices).
+
+```ts
+nth(2, [1, 2, 3, 4])  // => 3
+nth(-1, [1, 2, 3])     // => 3
+```
+
+### `transpose`
+
+Transposes a list of lists (matrix flip).
+
+```ts
+transpose([[1, 2], [3, 4]])  // => [[1, 3], [2, 4]]
+```
+
+### `xprod`
+
+Cartesian product of two arrays.
+
+```ts
+xprod([1, 2], ['a', 'b'])  // => [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
+```
+
+### `dropRepeats`
+
+Removes consecutive duplicate elements.
+
+```ts
+dropRepeats([1, 1, 2, 2, 3])  // => [1, 2, 3]
+```
+
+### `move`
+
+Moves an element from one index to another.
+
+```ts
+move(0, 2, [1, 2, 3])  // => [2, 3, 1]
+```
+
+### `swap`
+
+Swaps two elements by index.
+
+```ts
+swap(0, 2, [1, 2, 3])  // => [3, 2, 1]
+```
+
+### `unnest`
+
+Flattens one level.
+
+```ts
+unnest([[1], [2, 3], [[4]]])  // => [1, 2, 3, [4]]
+```
+
+### `scan`
+
+Like reduce but yields all intermediate accumulators.
+
+```ts
+scan((a, b) => a + b, 0, [1, 2, 3])  // => [0, 1, 3, 6]
+```
+
+### `splitWhen` / `splitWhenever`
+
+Split arrays when/wherever a predicate matches.
+
+### `takeLastWhile` / `dropLastWhile`
+
+Take/drop from the end while a predicate holds.
+
+### `collectBy` / `reduceBy`
+
+Group/reduce by a key function.
+
+### `mapAccum` / `mapAccumRight`
+
+Accumulate while mapping (like reduce that produces an array).
+
+### `indexOf` / `lastIndexOf`
+
+Find the index of a value.
+
+```ts
+indexOf(2, [1, 2, 3])  // => 1
+```
+
+### `unfold`
+
+Generates a list from a seed value.
+
+```ts
+unfold(x => x < 5 ? [x, x + 1] : false, 1)  // => [1, 2, 3, 4]
+```
+
+### `transduce` / `traverse`
+
+Transduce with a transducer; traverse with an applicative.
+
+### `reduceWhile` / `reduced`
+
+Reduce with early termination.
+
+### Additional list functions
+
+`dropLastWhile`, `dropRepeatsBy`, `dropRepeatsWith`, `pair`, `reduceBy`, `splitWhenever`, `swap`
+
 ---
 
 ## Object
@@ -968,7 +1414,11 @@ mergeAll([{a: 1}, {b: 2}, {c: 3}])  // => {a: 1, b: 2, c: 3}
 
 ### `mergeLeft`
 
-Same as `merge` (left-biased).
+Left-biased merge (left wins).
+
+```ts
+mergeLeft({a: 1}, {a: 2})  // => {a: 1}
+```
 
 ### `mergeRight`
 
@@ -1091,6 +1541,63 @@ Sets the focused value (returns new object, original unchanged).
 
 Applies a function to the focused value.
 
+### `clone`
+
+Deep clones a value (JSON roundtrip).
+
+```ts
+clone({a: 1, b: {c: 2}})  // => {a: 1, b: {c: 2}}  (new reference)
+```
+
+### `modify` / `modifyPath`
+
+Applies a function to a property or path.
+
+```ts
+modify('a', x => x * 2, {a: 5, b: 10})         // => {a: 10, b: 10}
+modifyPath(['a', 'b'], x => x * 2, {a: {b: 5}}) // => {a: {b: 10}}
+```
+
+### `objOf`
+
+Creates a single-key object.
+
+```ts
+objOf('a', 1)  // => {a: 1}
+```
+
+### `pickAll`
+
+Like `pick` but includes `undefined` for missing keys.
+
+### `renameKeys`
+
+Renames keys using a mapping.
+
+```ts
+renameKeys({a: 'x', b: 'y'}, {a: 1, b: 2})  // => {x: 1, y: 2}
+```
+
+### `whereAny`
+
+Returns true if any predicate in the spec matches.
+
+```ts
+whereAny({a: x => x > 0, b: x => x.length > 1}, {a: 0, b: 'hi'})  // => true
+```
+
+### `mergeDeepLeft`
+
+Deep merge with left values taking precedence.
+
+### `mergeWith` / `mergeWithKey` / `mergeDeepWith` / `mergeDeepWithKey`
+
+Custom merge strategies.
+
+### Additional object functions
+
+`eqProps`, `forEachObjIndexed`, `hasIn`, `hasPath`, `invert`, `invertObj`, `keysIn`, `mapKeys`, `mapObjIndexed`, `paths`, `toPairsIn`, `unwind`, `valuesIn`
+
 ---
 
 ## String
@@ -1168,6 +1675,14 @@ padStart(5, '0', '42')  // => '00042'
 padEnd(5, '0', '42')  // => '42000'
 ```
 
+### `toString`
+
+```ts
+toString(42)     // => '42'
+toString(null)   // => 'null'
+toString([1,2])  // => '1,2'
+```
+
 ---
 
 ## Type
@@ -1200,6 +1715,13 @@ is(RegExp, /x/)   // => true
 isNil(null)       // => true
 isNil(undefined)  // => true
 isNil(0)          // => false
+```
+
+### `isNotNil`
+
+```ts
+isNotNil(0)       // => true
+isNotNil(null)    // => false
 ```
 
 ### `isArray`

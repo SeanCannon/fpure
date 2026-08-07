@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { gt, lt, gte, lte, identical, equals } = require('../dist/index.js');
+const { gt, lt, gte, lte, identical, equals, differenceWith, eqBy, innerJoin, pathEq, propEq, sortWith, symmetricDifference, symmetricDifferenceWith, unionWith } = require('../dist/index.js');
 
 describe('gt', () => {
   it('returns true when the second argument is greater than the first (data-last)', () => {
@@ -132,5 +132,81 @@ describe('equals', () => {
     t2.then = () => {};
     assert.equal(equals(t1, t1), true);
     assert.equal(equals(t1, t2), false);
+  });
+});
+
+describe('differenceWith', () => {
+  it('finds elements in first not in second using comparator', () => {
+    assert.deepEqual(differenceWith((a, b) => a.id === b.id, [{id: 1}, {id: 2}], [{id: 2}]), [{id: 1}]);
+  });
+});
+
+describe('eqBy', () => {
+  it('compares transformed values', () => {
+    assert.equal(eqBy(x => x.length, 'hello', 'world'), true);
+    assert.equal(eqBy(x => x.length, 'hi', 'world'), false);
+  });
+});
+
+describe('innerJoin', () => {
+  it('inner joins two lists', () => {
+    assert.deepEqual(innerJoin((a, b) => a.id === b.id, [{id: 1}, {id: 2}], [{id: 1, name: 'a'}, {id: 3}]), [{id: 1}]);
+  });
+});
+
+describe('pathEq', () => {
+  it('checks path equality', () => {
+    assert.equal(pathEq(42, ['a', 'b'], {a: {b: 42}}), true);
+    assert.equal(pathEq(99, ['a', 'b'], {a: {b: 42}}), false);
+    assert.equal(pathEq(42, ['a', 'x'], {a: {b: 42}}), false);
+  });
+});
+
+describe('propEq', () => {
+  it('checks property equality', () => {
+    assert.equal(propEq(42, 'a', {a: 42}), true);
+    assert.equal(propEq(99, 'a', {a: 42}), false);
+  });
+});
+
+describe('sortWith', () => {
+  it('sorts with multiple comparators', () => {
+    const data = [{name: 'a', age: 30}, {name: 'b', age: 20}, {name: 'a', age: 20}];
+    const byName = (a, b) => a.name.localeCompare(b.name);
+    const byAge = (a, b) => a.age - b.age;
+    assert.deepEqual(sortWith([byName, byAge], data), [{name: 'a', age: 20}, {name: 'a', age: 30}, {name: 'b', age: 20}]);
+  });
+});
+
+describe('symmetricDifference', () => {
+  it('elements in either but not both', () => {
+    assert.deepEqual(symmetricDifference([1, 2, 3], [2, 3, 4]), [1, 4]);
+  });
+});
+
+describe('symmetricDifferenceWith', () => {
+  it('symmetric difference with comparator', () => {
+    const result = symmetricDifferenceWith((a, b) => a.id === b.id, [{id: 1}, {id: 2}], [{id: 2}, {id: 3}]);
+    assert.deepEqual(result, [{id: 1}, {id: 3}]);
+  });
+});
+
+describe('unionWith', () => {
+  it('union with comparator', () => {
+    const result = unionWith((a, b) => a.id === b.id, [{id: 1}, {id: 2}], [{id: 2}, {id: 3}]);
+    assert.deepEqual(result, [{id: 1}, {id: 2}, {id: 3}]);
+  });
+});
+
+describe('pathEq with missing path', () => {
+  it('returns false when path does not exist', () => {
+    assert.equal(pathEq(42, ['a', 'b'], { a: null }), false);
+    assert.equal(pathEq(42, ['x', 'y'], {}), false);
+  });
+});
+
+describe('sortWith equal elements', () => {
+  it('handles equal elements with all comparators returning 0', () => {
+    assert.deepEqual(sortWith([(a, b) => a - b], [1, 1, 1]), [1, 1, 1]);
   });
 });

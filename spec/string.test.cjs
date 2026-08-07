@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { toUpper, toLower, trim, split, join, replace, test, match, startsWith, endsWith, padStart, padEnd } = require('../dist/index.js');
+const { toUpper, toLower, trim, split, join, replace, test, match, startsWith, endsWith, padStart, padEnd, toString } = require('../dist/index.js');
 
 describe('toUpper', () => {
   it('converts a string to uppercase', () => {
@@ -89,5 +89,13 @@ describe('padStart', () => {
 describe('padEnd', () => {
   it('pads the end of a string to the given length', () => {
     assert.equal(padEnd(5, '0', '42'), '42000');
+  });
+});
+
+describe('toString', () => {
+  it('converts a value to its string representation', () => {
+    assert.equal(toString(42), '42');
+    assert.equal(toString(null), 'null');
+    assert.equal(toString([1, 2]), '1,2');
   });
 });

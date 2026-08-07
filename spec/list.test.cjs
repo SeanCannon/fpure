@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { map, filter, reject, reduce, reduceRight, find, findIndex, head, tail, last, init, take, drop, takeWhile, dropWhile, takeLast, dropLast, slice, splitAt, splitEvery, remove, insert, insertAll, update, adjust, append, prepend, concat, flatten, chain, repeat, times, zip, zipObj, zipWith, groupBy, groupWith, sort, sortBy, asc, desc, all, any, none, includes, without, difference, intersection, union, uniq, uniqBy, uniqWith, aperture, partition, span, pluck, project, fromPairs, toPairs, reverse, length, countBy, forEach, indexBy, interpose, intercalate, findLast, findLastIndex } = require('../dist/index.js');
+const { map, filter, reject, reduce, reduceRight, find, findIndex, head, tail, last, init, take, drop, takeWhile, dropWhile, takeLast, dropLast, slice, splitAt, splitEvery, remove, insert, insertAll, update, adjust, append, prepend, concat, flatten, chain, repeat, times, zip, zipObj, zipWith, groupBy, groupWith, sort, sortBy, asc, desc, all, any, none, includes, without, difference, intersection, union, uniq, uniqBy, uniqWith, aperture, partition, span, pluck, project, fromPairs, toPairs, reverse, length, countBy, forEach, indexBy, interpose, intercalate, findLast, findLastIndex, collectBy, dropLastWhile, dropRepeats, dropRepeatsBy, dropRepeatsWith, indexOf, lastIndexOf, mapAccum, mapAccumRight, move, nth, pair, range, reduceBy, Reduced, reduced, reduceWhile, scan, splitWhen, splitWhenever, swap, takeLastWhile, transduce, transpose, traverse, unfold, unnest, xprod } = require('../dist/index.js');
 
 describe('map', () => {
   it('applies a function to each element of an array', () => {
@@ -444,5 +444,199 @@ describe('forEach', () => {
 describe('indexBy', () => {
   it('indexes a list by a key function, last duplicate wins', () => {
     assert.deepEqual(indexBy(x => x.id, [{ id: 'a', v: 1 }, { id: 'b', v: 2 }]), { a: { id: 'a', v: 1 }, b: { id: 'b', v: 2 } });
+  });
+});
+
+describe('collectBy', () => {
+  it('groups by key maintaining order', () => {
+    assert.deepEqual(collectBy(x => x > 2, [1, 2, 3, 4]), [[1, 2], [3, 4]]);
+  });
+});
+
+describe('dropLastWhile', () => {
+  it('drops from end while predicate holds', () => {
+    assert.deepEqual(dropLastWhile(x => x > 2, [1, 2, 3, 4, 5]), [1, 2]);
+  });
+});
+
+describe('dropRepeats', () => {
+  it('removes consecutive duplicates', () => {
+    assert.deepEqual(dropRepeats([1, 1, 2, 2, 3]), [1, 2, 3]);
+    assert.deepEqual(dropRepeats([1, 2, 1]), [1, 2, 1]);
+  });
+});
+
+describe('dropRepeatsBy', () => {
+  it('removes consecutive duplicates by key', () => {
+    assert.deepEqual(dropRepeatsBy(x => x, [1, 1, 2, 3, 3]), [1, 2, 3]);
+  });
+});
+
+describe('dropRepeatsWith', () => {
+  it('removes consecutive duplicates with comparator', () => {
+    assert.deepEqual(dropRepeatsWith((a, b) => a === b, [1, 1, 2, 2, 3]), [1, 2, 3]);
+  });
+});
+
+describe('indexOf', () => {
+  it('returns the index of a value', () => {
+    assert.equal(indexOf(2, [1, 2, 3]), 1);
+    assert.equal(indexOf(4, [1, 2, 3]), -1);
+  });
+});
+
+describe('lastIndexOf', () => {
+  it('returns the last index of a value', () => {
+    assert.equal(lastIndexOf(2, [1, 2, 3, 2]), 3);
+    assert.equal(lastIndexOf(4, [1, 2, 3]), -1);
+  });
+});
+
+describe('mapAccum', () => {
+  it('accumulates and maps', () => {
+    assert.deepEqual(mapAccum((acc, x) => [acc + x, acc + x], 0, [1, 2, 3]), [6, [1, 3, 6]]);
+  });
+});
+
+describe('mapAccumRight', () => {
+  it('accumulates and maps right-to-left', () => {
+    assert.deepEqual(mapAccumRight((acc, x) => [acc + x, acc + x], 0, [1, 2, 3]), [6, [6, 5, 3]]);
+  });
+});
+
+describe('move', () => {
+  it('moves an element from one index to another', () => {
+    assert.deepEqual(move(0, 2, [1, 2, 3]), [2, 3, 1]);
+  });
+});
+
+describe('nth', () => {
+  it('returns the nth element', () => {
+    assert.equal(nth(2, [1, 2, 3, 4]), 3);
+  });
+  it('supports negative indices', () => {
+    assert.equal(nth(-1, [1, 2, 3]), 3);
+  });
+});
+
+describe('pair', () => {
+  it('creates a pair', () => {
+    assert.deepEqual(pair('a', 1), ['a', 1]);
+  });
+});
+
+describe('range', () => {
+  it('generates a range from from to to', () => {
+    assert.deepEqual(range(1, 5), [1, 2, 3, 4]);
+  });
+});
+
+describe('reduceBy', () => {
+  it('grouped reduce', () => {
+    assert.deepEqual(reduceBy((acc, x) => acc + x, 0, x => x > 2 ? 'big' : 'small', [1, 2, 3, 4]), { small: 3, big: 7 });
+  });
+});
+
+describe('reduceWhile', () => {
+  it('reduces with early termination', () => {
+    assert.equal(reduceWhile((acc, x) => acc + x < 10, (acc, x) => acc + x, 0, [1, 2, 3, 100, 4]), 6);
+  });
+});
+
+describe('scan', () => {
+  it('yields all intermediate accumulators', () => {
+    assert.deepEqual(scan((a, b) => a + b, 0, [1, 2, 3]), [0, 1, 3, 6]);
+  });
+});
+
+describe('splitWhen', () => {
+  it('splits at first match', () => {
+    assert.deepEqual(splitWhen(x => x > 2, [1, 2, 3, 4]), [[1, 2], [3, 4]]);
+    assert.deepEqual(splitWhen(x => x > 10, [1, 2, 3]), [[1, 2, 3], []]);
+  });
+});
+
+describe('splitWhenever', () => {
+  it('splits whenever predicate matches', () => {
+    assert.deepEqual(splitWhenever(x => x === 0, [1, 2, 0, 3, 4, 0, 5]), [[1, 2], [3, 4], [5]]);
+  });
+});
+
+describe('swap', () => {
+  it('swaps two elements', () => {
+    assert.deepEqual(swap(0, 2, [1, 2, 3]), [3, 2, 1]);
+  });
+});
+
+describe('takeLastWhile', () => {
+  it('takes from end while predicate holds', () => {
+    assert.deepEqual(takeLastWhile(x => x > 2, [1, 2, 3, 4, 5]), [3, 4, 5]);
+  });
+});
+
+describe('transduce', () => {
+  it('transduces with a transducer', () => {
+    const map = (fn) => (step) => (acc, x) => step(acc, fn(x));
+    const filter = (pred) => (step) => (acc, x) => pred(x) ? step(acc, x) : acc;
+    const mapAdd1 = map(x => x + 1);
+    const filterGt3 = filter(x => x >= 3);
+    const transducer = (step) => filterGt3(mapAdd1(step));
+    assert.deepEqual(transduce(transducer, (acc, x) => [...acc, x], [], [1, 2, 3, 4]), [4, 5]);
+  });
+});
+
+describe('transpose', () => {
+  it('transposes a list of lists', () => {
+    assert.deepEqual(transpose([[1, 2], [3, 4]]), [[1, 3], [2, 4]]);
+  });
+});
+
+describe('traverse', () => {
+  it('maps and transposes', () => {
+    assert.deepEqual(traverse(x => [x, x * 2], [1, 2]), [[1, 2], [2, 4]]);
+  });
+});
+
+describe('unfold', () => {
+  it('generates a list from a seed', () => {
+    assert.deepEqual(unfold(x => x < 5 ? [x, x + 1] : false, 1), [1, 2, 3, 4]);
+  });
+});
+
+describe('unnest', () => {
+  it('flattens one level', () => {
+    assert.deepEqual(unnest([[1], [2, 3], [[4]]]), [1, 2, 3, [4]]);
+  });
+});
+
+describe('xprod', () => {
+  it('computes cartesian product', () => {
+    assert.deepEqual(xprod([1, 2], ['a', 'b']), [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]);
+  });
+});
+
+describe('reduceWhile with reduced', () => {
+  it('terminates early via reduced', () => {
+    assert.equal(reduceWhile((acc, x) => true, (acc, x) => x > 3 ? reduced(acc + x) : acc + x, 0, [1, 2, 3, 100, 4]), 106);
+  });
+});
+
+describe('reduced', () => {
+  it('wraps a value for early termination', () => {
+    const r = reduced(42);
+    assert.equal(r.value, 42);
+    assert.ok(r instanceof Reduced);
+  });
+});
+
+describe('transpose empty', () => {
+  it('returns empty array for empty input', () => {
+    assert.deepEqual(transpose([]), []);
+  });
+});
+
+describe('traverse empty', () => {
+  it('returns empty array for empty input', () => {
+    assert.deepEqual(traverse(x => [x, x * 2], []), []);
   });
 });
