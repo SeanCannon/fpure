@@ -20,7 +20,7 @@ import { compose, add, map, filter, gt } from 'fpure';
 compose(
   filter(gt(3)), 
   map(add(1))
-)([1, 2, 3, 4]) // => [3, 5]  (add 1 to each, then keep values > 3)
+)([1, 2, 3, 4]) // => [4, 5]  (add 1 to each, then keep values > 3)
 
 ```
 
@@ -32,24 +32,26 @@ compose(
 
 | Metric | `fpure`                                            | Ramda | Sanctuary |
 |--------|--------------------------------------------------|-------|-----------|
-| Bundle size (gzip) | **7 KB** (full lib)                              | ~14 KB (minified) | ~30 KB |
+| Bundle size (gzip) | **~12 KB** (all 281 funcs, unminified)           | ~14 KB (min+gzip) | ~30 KB (min+gzip) |
 | Zero runtime dependencies | **Yes**                                          | Yes | No (type system deps) |
 | Runtime type checks | **No** (types at compile time only)              | No | Yes (runtime validation) |
-| TypeScript declarations | **Built-in, ships with package**                 | Requires `@types/ramda` | Ships with package |
-| Deep import for tree-shaking (CJS) | **Supported** (`require('fpure/list/map')`) | Not supported (single 351 KB `dist/ramda.js`) | N/A |
-| Deep import for tree-shaking (ESM) | Not yet (CJS-only... works via bundler interop)  | Supported (`import map from 'ramda/es/map'`) | Supported |
-| Per-function internal dependencies | **1** (`curry`)                                  | 2–8 (`_curry2`, `_dispatchable`, `_xmap`, etc.) | Varies |
+| TypeScript declarations | **Built-in, ships with package**                 | Requires `@types/ramda` | Requires `@types/sanctuary` |
+| Deep import for tree-shaking (CJS) | **Supported** (`require('fpure/list/map')`) | Supported (`require('ramda/src/map')`) | N/A (single module) |
+| Deep import for tree-shaking (ESM) | Not yet (CJS-only... works via bundler interop)  | Supported (`import map from 'ramda/es/map'`) | N/A (single module) |
+| Per-function internal dependencies | **1** (`curry`) for 269/281; a few reuse 1–3 helpers (`equals`, lenses, `mean`) | 2–8 (`_curry2`, `_dispatchable`, `_xmap`, etc.) | Varies |
 | Data-last `sub(3)(10)` | **`7`** (10 − 3)                                 | `−7` (3 − 10) | `7` |
 | Data-last `gt(3)(5)` | **`true`** (5 > 3)                               | `false` (3 > 5) | `true` |
-| Function count | 247                                              | ~300 | ~100 |
+| Function count | 281                                              | ~272 | ~165 |
+
+> Ramda and Sanctuary figures are approximate, measured against their current releases (Ramda 0.32, Sanctuary 3.1). `fpure` figures are measured directly from this package.
 
 ### Key differentiators
 
 **Data-last for ALL binary ops.** Ramda's `sub`, `div`, `mod`, and `gt`/`lt`/`gte`/`lte` use config-first ordering that produces surprising results (`sub(3)(10)` = `-7`, `gt(3)(5)` = `false`). `fpure` is consistently data-last: `sub(3)(10)` = `7`, `gt(3)(5)` = `true`.
 
-**Minimal per-function overhead.** Each Ramda function imports 2–8 internal helpers (`_curry2`, `_dispatchable`, `_xfilter`, etc.). Every `fpure` function imports only `curry`.
+**Minimal per-function overhead.** Each Ramda function imports 2–8 internal helpers (`_curry2`, `_dispatchable`, `_xfilter`, etc.). 269 of 281 `fpure` functions import only `curry`; a handful reuse a nearby helper instead (e.g. `mean` uses `sum`, the lens constructors use `lens`).
 
-**CJS tree-shakeable.** `fpure` ships every function as a standalone CommonJS file. You can deep-import `require('fpure/list/map')` and get exactly that function + `curry` (no barrel overhead, no bundled internals). Ramda's CJS entry is a single 351 KB `dist/ramda.js` bundle with no CJS per-function alternative.
+**CJS tree-shakeable.** `fpure` ships every function as a standalone CommonJS file with a matching `.d.ts`. You can deep-import `require('fpure/list/map')` and get exactly that function + `curry` — no barrel overhead, no bundled internals — and it works in Node without a bundler. Ramda's CJS deep imports point at unbuilt source (`ramda/src/map`), and `require('ramda')` pulls in the whole library either way (a single ~351 KB bundle in versions ≤ 0.28, a full `src/` barrel in newer ones).
 
 **Zero runtime type overhead.** Sanctuary validates types at runtime. `fpure` uses TypeScript types only, meaning zero runtime cost, faster execution, smaller bundles.
 
@@ -134,7 +136,7 @@ Swaps the first two arguments of a function.
 
 ```ts
 const sub = curry((a, b) => a - b)
-flip(sub, 3, 10)  // => 7  (calls sub(10, 3))
+flip(sub, 3, 10)  // => -7  (calls sub(10, 3) = 3 − 10)
 ```
 
 ### `apply`

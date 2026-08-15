@@ -1,6 +1,6 @@
 {
   "name": "fpure",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Pure, curried, functional programming utilities for TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -49,6 +49,46 @@
       "types": "./dist/type/index.d.ts",
       "require": "./dist/type/index.js",
       "default": "./dist/type/index.js"
+    },
+    "./function/*": {
+      "types": "./dist/function/*.d.ts",
+      "require": "./dist/function/*.js",
+      "default": "./dist/function/*.js"
+    },
+    "./list/*": {
+      "types": "./dist/list/*.d.ts",
+      "require": "./dist/list/*.js",
+      "default": "./dist/list/*.js"
+    },
+    "./logic/*": {
+      "types": "./dist/logic/*.d.ts",
+      "require": "./dist/logic/*.js",
+      "default": "./dist/logic/*.js"
+    },
+    "./math/*": {
+      "types": "./dist/math/*.d.ts",
+      "require": "./dist/math/*.js",
+      "default": "./dist/math/*.js"
+    },
+    "./object/*": {
+      "types": "./dist/object/*.d.ts",
+      "require": "./dist/object/*.js",
+      "default": "./dist/object/*.js"
+    },
+    "./relation/*": {
+      "types": "./dist/relation/*.d.ts",
+      "require": "./dist/relation/*.js",
+      "default": "./dist/relation/*.js"
+    },
+    "./string/*": {
+      "types": "./dist/string/*.d.ts",
+      "require": "./dist/string/*.js",
+      "default": "./dist/string/*.js"
+    },
+    "./type/*": {
+      "types": "./dist/type/*.d.ts",
+      "require": "./dist/type/*.js",
+      "default": "./dist/type/*.js"
     }
   },
   "sideEffects": false,
