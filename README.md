@@ -37,7 +37,7 @@ compose(
 | Runtime type checks | **No** (types at compile time only)              | No | Yes (runtime validation) |
 | TypeScript declarations | **Built-in, ships with package**                 | Requires `@types/ramda` | Requires `@types/sanctuary` |
 | Deep import for tree-shaking (CJS) | **Supported** (`require('fpure/list/map')`) | Supported (`require('ramda/src/map')`) | N/A (single module) |
-| Deep import for tree-shaking (ESM) | Not yet (CJS-only... works via bundler interop)  | Supported (`import map from 'ramda/es/map'`) | N/A (single module) |
+| Deep import for tree-shaking (ESM) | **Supported** (`import { map } from 'fpure/list/map'`) | Supported (`import map from 'ramda/es/map'`) | N/A (single module) |
 | Per-function internal dependencies | **1** (`curry`) for 269/281; a few reuse 1–3 helpers (`equals`, lenses, `mean`) | 2–8 (`_curry2`, `_dispatchable`, `_xmap`, etc.) | Varies |
 | Data-last `sub(3)(10)` | **`7`** (10 − 3)                                 | `−7` (3 − 10) | `7` |
 | Data-last `gt(3)(5)` | **`true`** (5 > 3)                               | `false` (3 > 5) | `true` |
@@ -51,7 +51,7 @@ compose(
 
 **Minimal per-function overhead.** Each Ramda function imports 2–8 internal helpers (`_curry2`, `_dispatchable`, `_xfilter`, etc.). 269 of 281 `fpure` functions import only `curry`; a handful reuse a nearby helper instead (e.g. `mean` uses `sum`, the lens constructors use `lens`).
 
-**CJS tree-shakeable.** `fpure` ships every function as a standalone CommonJS file with a matching `.d.ts`. You can deep-import `require('fpure/list/map')` and get exactly that function + `curry` — no barrel overhead, no bundled internals — and it works in Node without a bundler. Ramda's CJS deep imports point at unbuilt source (`ramda/src/map`), and `require('ramda')` pulls in the whole library either way (a single ~351 KB bundle in versions ≤ 0.28, a full `src/` barrel in newer ones).
+**CJS & ESM tree-shakeable.** `fpure` ships every function as a standalone file — CommonJS for Node, ESM for bundlers — each with a matching `.d.ts`. You can deep-import `require('fpure/list/map')` or `import { map } from 'fpure/list/map'` and get exactly that function + `curry`: no barrel overhead, no bundled internals, and the CJS form works in Node without a bundler. A bundled ESM deep import was measured at ~0.4 KB vs ~27 KB for the full lib. Ramda's CJS deep imports point at unbuilt source (`ramda/src/map`), and `require('ramda')` pulls in the whole library either way (a single ~351 KB bundle in versions ≤ 0.28, a full `src/` barrel in newer ones).
 
 **Zero runtime type overhead.** Sanctuary validates types at runtime. `fpure` uses TypeScript types only, meaning zero runtime cost, faster execution, smaller bundles.
 

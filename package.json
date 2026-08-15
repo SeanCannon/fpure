@@ -1,93 +1,195 @@
 {
   "name": "fpure",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Pure, curried, functional programming utilities for TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
       "default": "./dist/index.js"
     },
     "./function": {
-      "types": "./dist/function/index.d.ts",
-      "require": "./dist/function/index.js",
+      "import": {
+        "types": "./dist/esm/function/index.d.ts",
+        "default": "./dist/esm/function/index.js"
+      },
+      "require": {
+        "types": "./dist/function/index.d.ts",
+        "default": "./dist/function/index.js"
+      },
       "default": "./dist/function/index.js"
     },
     "./list": {
-      "types": "./dist/list/index.d.ts",
-      "require": "./dist/list/index.js",
+      "import": {
+        "types": "./dist/esm/list/index.d.ts",
+        "default": "./dist/esm/list/index.js"
+      },
+      "require": {
+        "types": "./dist/list/index.d.ts",
+        "default": "./dist/list/index.js"
+      },
       "default": "./dist/list/index.js"
     },
     "./logic": {
-      "types": "./dist/logic/index.d.ts",
-      "require": "./dist/logic/index.js",
+      "import": {
+        "types": "./dist/esm/logic/index.d.ts",
+        "default": "./dist/esm/logic/index.js"
+      },
+      "require": {
+        "types": "./dist/logic/index.d.ts",
+        "default": "./dist/logic/index.js"
+      },
       "default": "./dist/logic/index.js"
     },
     "./math": {
-      "types": "./dist/math/index.d.ts",
-      "require": "./dist/math/index.js",
+      "import": {
+        "types": "./dist/esm/math/index.d.ts",
+        "default": "./dist/esm/math/index.js"
+      },
+      "require": {
+        "types": "./dist/math/index.d.ts",
+        "default": "./dist/math/index.js"
+      },
       "default": "./dist/math/index.js"
     },
     "./object": {
-      "types": "./dist/object/index.d.ts",
-      "require": "./dist/object/index.js",
+      "import": {
+        "types": "./dist/esm/object/index.d.ts",
+        "default": "./dist/esm/object/index.js"
+      },
+      "require": {
+        "types": "./dist/object/index.d.ts",
+        "default": "./dist/object/index.js"
+      },
       "default": "./dist/object/index.js"
     },
     "./relation": {
-      "types": "./dist/relation/index.d.ts",
-      "require": "./dist/relation/index.js",
+      "import": {
+        "types": "./dist/esm/relation/index.d.ts",
+        "default": "./dist/esm/relation/index.js"
+      },
+      "require": {
+        "types": "./dist/relation/index.d.ts",
+        "default": "./dist/relation/index.js"
+      },
       "default": "./dist/relation/index.js"
     },
     "./string": {
-      "types": "./dist/string/index.d.ts",
-      "require": "./dist/string/index.js",
+      "import": {
+        "types": "./dist/esm/string/index.d.ts",
+        "default": "./dist/esm/string/index.js"
+      },
+      "require": {
+        "types": "./dist/string/index.d.ts",
+        "default": "./dist/string/index.js"
+      },
       "default": "./dist/string/index.js"
     },
     "./type": {
-      "types": "./dist/type/index.d.ts",
-      "require": "./dist/type/index.js",
+      "import": {
+        "types": "./dist/esm/type/index.d.ts",
+        "default": "./dist/esm/type/index.js"
+      },
+      "require": {
+        "types": "./dist/type/index.d.ts",
+        "default": "./dist/type/index.js"
+      },
       "default": "./dist/type/index.js"
     },
     "./function/*": {
-      "types": "./dist/function/*.d.ts",
-      "require": "./dist/function/*.js",
+      "import": {
+        "types": "./dist/esm/function/*.d.ts",
+        "default": "./dist/esm/function/*.js"
+      },
+      "require": {
+        "types": "./dist/function/*.d.ts",
+        "default": "./dist/function/*.js"
+      },
       "default": "./dist/function/*.js"
     },
     "./list/*": {
-      "types": "./dist/list/*.d.ts",
-      "require": "./dist/list/*.js",
+      "import": {
+        "types": "./dist/esm/list/*.d.ts",
+        "default": "./dist/esm/list/*.js"
+      },
+      "require": {
+        "types": "./dist/list/*.d.ts",
+        "default": "./dist/list/*.js"
+      },
       "default": "./dist/list/*.js"
     },
     "./logic/*": {
-      "types": "./dist/logic/*.d.ts",
-      "require": "./dist/logic/*.js",
+      "import": {
+        "types": "./dist/esm/logic/*.d.ts",
+        "default": "./dist/esm/logic/*.js"
+      },
+      "require": {
+        "types": "./dist/logic/*.d.ts",
+        "default": "./dist/logic/*.js"
+      },
       "default": "./dist/logic/*.js"
     },
     "./math/*": {
-      "types": "./dist/math/*.d.ts",
-      "require": "./dist/math/*.js",
+      "import": {
+        "types": "./dist/esm/math/*.d.ts",
+        "default": "./dist/esm/math/*.js"
+      },
+      "require": {
+        "types": "./dist/math/*.d.ts",
+        "default": "./dist/math/*.js"
+      },
       "default": "./dist/math/*.js"
     },
     "./object/*": {
-      "types": "./dist/object/*.d.ts",
-      "require": "./dist/object/*.js",
+      "import": {
+        "types": "./dist/esm/object/*.d.ts",
+        "default": "./dist/esm/object/*.js"
+      },
+      "require": {
+        "types": "./dist/object/*.d.ts",
+        "default": "./dist/object/*.js"
+      },
       "default": "./dist/object/*.js"
     },
     "./relation/*": {
-      "types": "./dist/relation/*.d.ts",
-      "require": "./dist/relation/*.js",
+      "import": {
+        "types": "./dist/esm/relation/*.d.ts",
+        "default": "./dist/esm/relation/*.js"
+      },
+      "require": {
+        "types": "./dist/relation/*.d.ts",
+        "default": "./dist/relation/*.js"
+      },
       "default": "./dist/relation/*.js"
     },
     "./string/*": {
-      "types": "./dist/string/*.d.ts",
-      "require": "./dist/string/*.js",
+      "import": {
+        "types": "./dist/esm/string/*.d.ts",
+        "default": "./dist/esm/string/*.js"
+      },
+      "require": {
+        "types": "./dist/string/*.d.ts",
+        "default": "./dist/string/*.js"
+      },
       "default": "./dist/string/*.js"
     },
     "./type/*": {
-      "types": "./dist/type/*.d.ts",
-      "require": "./dist/type/*.js",
+      "import": {
+        "types": "./dist/esm/type/*.d.ts",
+        "default": "./dist/esm/type/*.js"
+      },
+      "require": {
+        "types": "./dist/type/*.d.ts",
+        "default": "./dist/type/*.js"
+      },
       "default": "./dist/type/*.js"
     }
   },
@@ -96,11 +198,11 @@
     "dist/"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc -p tsconfig.esm.json && node scripts/write-esm-package.cjs",
     "test": "npm run build && node --test spec/*.test.cjs",
     "coverage": "npm run build && c8 --reporter=lcov --reporter=text node --test spec/*.test.cjs",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "tsc"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
